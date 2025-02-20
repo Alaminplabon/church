@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>New Custom Package Request</title>
+    <style>
+      /* Reset some defaults */
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table {
+        border-collapse: collapse !important;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100% !important;
+        height: 100% !important;
+        background-color: #f6f6f6;
+        font-family: Arial, sans-serif;
+        color: #333333;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      /* Container */
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      /* Header */
+      .header {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      /* Content */
+      .content {
+        padding: 20px;
+      }
+      .content p {
+        margin: 0 0 15px;
+      }
+      .details-table {
+        width: 100%;
+        margin-bottom: 20px;
+        border: 1px solid #eeeeee;
+      }
+      .details-table th,
+      .details-table td {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid #eeeeee;
+      }
+      .details-table th {
+        background-color: #f2f2f2;
+        width: 40%;
+      }
+      /* Button */
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        margin: 10px 0;
+      }
+      /* Footer */
+      .footer {
+        background-color: #f2f2f2;
+        padding: 15px;
+        text-align: center;
+        font-size: 12px;
+        color: #777777;
+      }
+      /* Responsive */
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100% !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header Section -->
+      <div class="header">
+        <h1>New Custom Package Request</h1>
+      </div>
+
+      <!-- Content Section -->
+      <div class="content">
+        <p>Hello Admin,</p>
+        <p>
+          A new custom package request has been submitted with the following
+          details:
+        </p>
+        <table class="details-table">
+          <tr>
+            <th>Price:</th>
+            <td>{{price}}</td>
+          </tr>
+          <tr>
+            <th>Member Count:</th>
+            <td>{{member}}</td>
+          </tr>
+          <tr>
+            <th>Contact Number:</th>
+            <td>{{contactNumber}}</td>
+          </tr>
+          <tr>
+            <th>Duration:</th>
+            <td>{{duration}}</td>
+          </tr>
+          <tr>
+            <th>Description:</th>
+            <td>{{description}}</td>
+          </tr>
+        </table>
+        <p>Please review the request at your earliest convenience.</p>
+        <!-- Optional call-to-action button -->
+        <p style="text-align: center">
+          <a href="#" class="button">View Request</a>
+        </p>
+      </div>
+
+      <!-- Footer Section -->
+      <div class="footer">
+        <p>&copy; 2025 Your Company Name. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>

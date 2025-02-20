@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.churchRoutes = void 0;
+const express_1 = require("express");
+const church_controller_1 = require("./church.controller");
+const router = (0, express_1.Router)();
+router.post('/', church_controller_1.churchController.createChurch);
+router.patch('/:id', church_controller_1.churchController.updateChurch);
+router.delete('/:id', church_controller_1.churchController.deleteChurch);
+router.get('/:id', church_controller_1.churchController.getChurchById);
+router.get('/', church_controller_1.churchController.getAllChurch);
+exports.churchRoutes = router;

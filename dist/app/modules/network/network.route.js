@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.networkRoutes = void 0;
+const express_1 = require("express");
+const network_controller_1 = require("./network.controller");
+const router = (0, express_1.Router)();
+router.post('/send-request', network_controller_1.networkController.sendFriendRequest);
+router.patch('/accept-request', network_controller_1.networkController.acceptFriendRequest);
+router.patch('/reject-request', network_controller_1.networkController.rejectFriendRequest);
+router.post('/send-message', network_controller_1.networkController.sendMessage);
+router.get('/sent-requests', network_controller_1.networkController.getSentRequests);
+router.get('/pending-requests', network_controller_1.networkController.getPendingRequests);
+router.get('/friends', network_controller_1.networkController.getFriendsList);
+exports.networkRoutes = router;

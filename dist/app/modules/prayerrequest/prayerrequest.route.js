@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.prayerrequestRoutes = void 0;
+const express_1 = require("express");
+const prayerrequest_controller_1 = require("./prayerrequest.controller");
+const router = (0, express_1.Router)();
+router.post('/create-prayerrequest', prayerrequest_controller_1.prayerrequestController.createprayerrequest);
+router.patch('/update/:id', prayerrequest_controller_1.prayerrequestController.updateprayerrequest);
+router.delete('/:id', prayerrequest_controller_1.prayerrequestController.deleteprayerrequest);
+router.get('/:id', prayerrequest_controller_1.prayerrequestController.getprayerrequest);
+router.get('/', prayerrequest_controller_1.prayerrequestController.getprayerrequest);
+exports.prayerrequestRoutes = router;
