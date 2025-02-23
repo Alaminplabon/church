@@ -9,7 +9,6 @@ import { User } from '../user/user.models';
 import { USER_ROLE } from '../user/user.constants';
 
 const createSubscription = async (payload: ISubscriptions) => {
-  // console.log('...........', payload);
   const isExist = await Subscription.findOne({
     user: payload.user,
     package: payload.package,
@@ -26,7 +25,6 @@ const createSubscription = async (payload: ISubscriptions) => {
   if (!packages) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Package not found');
   }
-  // console.log(user?.role);
   if (user?.role !== USER_ROLE.administrator) {
     throw new AppError(
       httpStatus.FORBIDDEN,
@@ -43,9 +41,6 @@ const createSubscription = async (payload: ISubscriptions) => {
   } else {
     throw new AppError(httpStatus.BAD_REQUEST, 'Invalid duration type');
   }
-  // payload.expiredAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-  // payload.expiredAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year
-
   const result = await Subscription.create(payload);
   if (!result) {
     throw new Error('Failed to create subscription');

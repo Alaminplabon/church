@@ -10,6 +10,7 @@ import Church from '../church/church.models';
 import { notificationServices } from '../notification/notification.service';
 import { Types } from 'mongoose';
 import { modeType } from '../notification/notification.interface';
+import { ChecksumAlgorithm } from '@aws-sdk/client-s3';
 export type IFilter = {
   searchTerm?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,7 +55,6 @@ const createUser = async (payload: IUser) => {
       ...payload,
       churchId: codeEntry.churchId, // Save churchId if it exists, otherwise save null
     });
-    console.log(user);
     if (!user) {
       throw new AppError(httpStatus.BAD_REQUEST, 'User creation failed');
     }
@@ -82,6 +82,7 @@ const createUser = async (payload: IUser) => {
   // Send notification to admins when a new administrator is created
   if (payload.role === 'administrator') {
     await sendNotificationToAdmins(user);
+    console.log('==================', user);
   }
   return user;
 
@@ -95,8 +96,10 @@ const createUser = async (payload: IUser) => {
       model_type: modeType.User,
     });
   }
+
   // Function to send notification to all administrators
   async function sendNotificationToAdmins(admin: IUser) {
+    console.log('new', admin);
     const admins = await User.find({ role: 'admin' }); // Fetch all admins
     for (const adminUser of admins) {
       await notificationServices.insertNotificationIntoDb({

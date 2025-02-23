@@ -34,8 +34,6 @@ const createEvent = async (payload: IEvent, userId: string, files: any) => {
           path: `images/event/images/${Math.floor(100000 + Math.random() * 900000)}`,
         });
       });
-      console.log('imagearray', imgsArray);
-
       payload.images = await uploadManyToS3(imgsArray);
     } else {
       throw new AppError(httpStatus.BAD_REQUEST, 'Upload minimum 1 image');
@@ -48,7 +46,6 @@ const createEvent = async (payload: IEvent, userId: string, files: any) => {
   if (!result) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create event');
   }
-  console.log(result._id);
   // return result;
   const tests = await codeGenerator.find({ userId: userId });
   const memberIds = tests
@@ -58,7 +55,7 @@ const createEvent = async (payload: IEvent, userId: string, files: any) => {
   async function sendNotification(memberId: any) {
     await notificationServices.insertNotificationIntoDb({
       receiver: memberId,
-      message: 'Test 2!',
+      message: 'A Event Organized In Your Church',
       description: `User ${userId} has successfully created an event titled "${payload.title}".`,
       refference: result._id,
       model_type: modeType.Event,

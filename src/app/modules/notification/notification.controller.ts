@@ -10,7 +10,6 @@ const insertNotificationIntoDb = catchAsync(
     const result = await notificationServices.insertNotificationIntoDb(
       req.body,
     );
-    console.log('insert notification------==========', req.body);
     //@ts-ignore
     const io = global?.socketio;
     if (io) {
@@ -39,6 +38,7 @@ const getAllNotifications = catchAsync(async (req: Request, res: Response) => {
 });
 
 const markAsDone = catchAsync(async (req: Request, res: Response) => {
+  // console.log('hhhhhhhhhhhh', req?.user?.userId1);
   const result = await notificationServices.markAsDone(req?.user?.userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,

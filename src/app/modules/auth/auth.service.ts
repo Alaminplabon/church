@@ -22,7 +22,6 @@ import { USER_ROLE } from '../user/user.constants';
 // Login
 const login = async (payload: TLogin) => {
   const user: IUser | null = await User.isUserExist(payload?.email);
-  console.log(user);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -34,8 +33,6 @@ const login = async (payload: TLogin) => {
   if (user?.isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is Blocked');
   }
-  console.log(await User.isPasswordMatched(payload.password, user.password));
-
   if (!(await User.isPasswordMatched(payload.password, user.password))) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Password does not match');
   }
@@ -43,8 +40,6 @@ const login = async (payload: TLogin) => {
   if (!user?.verification?.status) {
     throw new AppError(httpStatus.BAD_REQUEST, 'User account is not verified');
   }
-
-  // console.log(user);
 
   if (user?.role == USER_ROLE.administrator && user.durationDay <= 0) {
     const jwtPayload: { userId: string; role: string } = {

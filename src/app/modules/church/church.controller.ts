@@ -79,7 +79,6 @@ const getSingleChurch = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateChurch = catchAsync(async (req: Request, res: Response) => {
-  // console.log(req.body);
   const result = await churchService.updateChurch(
     req.params.id,
     req.body,

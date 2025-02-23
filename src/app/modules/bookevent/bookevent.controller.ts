@@ -71,7 +71,6 @@ const deleteBookedEvent = catchAsync(async (req: Request, res: Response) => {
 
 const getAllUserByEvents = catchAsync(async (req: Request, res: Response) => {
   const eventId = req.params.eventId as any;
-  // console.log(eventId);
   const result = await bookEventService.getAllUserByEvents(req.query, eventId);
   sendResponse(res, {
     statusCode: 200,

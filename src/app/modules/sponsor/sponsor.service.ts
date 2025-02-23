@@ -8,25 +8,7 @@ import mongoose from 'mongoose';
 import Church from '../church/church.models';
 import { modeType } from '../notification/notification.interface';
 import { notificationServices } from '../notification/notification.service';
-
-// const createSponsor = async (payload: {
-//   churchId: string;
-//   amount: number;
-//   userId: string;
-// }) => {
-//   // Create sponsor with isPaid set to false
-//   const sponsor = await Sponsor.create({
-//     ...payload,
-//     isPaid: false, // Sponsor is unpaid initially
-//   });
-
-//   if (!sponsor) {
-//     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create sponsorship');
-//   }
-
-//   return sponsor;
-// };
-
+import { User } from '../user/user.models';
 const createSponsor = async (payload: {
   churchId: string;
   amount: number;
@@ -43,28 +25,41 @@ const createSponsor = async (payload: {
   }
 
   // Find the church and update its balance
-  const church = await Church.findById(payload.churchId);
-  if (!church) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Church not found');
-  }
+  if (payload.churchId) {
+    const church = await Church.findById(payload.churchId);
+    if (!church) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Church not found');
+    }
+    // Add sponsor amount to church balance
+    church.churchBalance += payload.amount;
+    await church.save();
 
-  // Add sponsor amount to church balance
-  church.churchBalance += payload.amount;
-  await church.save();
+    const admin = await User.findOne({ role: 'admin' });
+    // Send notification for sponsorship creation
+    await notificationServices.insertNotificationIntoDb({
+      receiver: admin?._id, // Notify the user who created the sponsorship
+      message: `A User Has Sent a Sponsorship for the church ${church.churchName}`,
+      description: `You have successfully created a sponsorship of amount $${payload.amount} for the church ${church.churchName}.`,
+      refference: sponsor._id, // Reference the created sponsor
+      model_type: modeType.Sponsor,
+    });
+  }
+  const admin = await User.findOne({ role: 'admin' });
   // Send notification for sponsorship creation
   await notificationServices.insertNotificationIntoDb({
-    receiver: payload.userId, // Notify the user who created the sponsorship
-    message: 'Sponsorship Created Successfully',
-    description: `You have successfully created a sponsorship of amount $${payload.amount} for the church ${church.churchName}.`,
+    receiver: admin?._id, // Notify the user who created the sponsorship
+    message: 'A User Has Sent a Sponsorship',
+    description: `You have successfully created a sponsorship of amount $${payload.amount}.`,
     refference: sponsor._id, // Reference the created sponsor
     model_type: modeType.Sponsor,
   });
-
   return sponsor;
 };
 
 const calculateAmountByChurch = async (churchId: string) => {
-  const sponsors = await Sponsor.find({ churchId }).populate('paymentId');
+  const sponsors = await Sponsor.find({ churchId, isPaid: true }).populate(
+    'paymentId',
+  );
   let totalChurchAmount = 0;
   sponsors.forEach(sponsor => {
     totalChurchAmount += sponsor.amount;
@@ -86,8 +81,6 @@ const calculateAmountByChurch = async (churchId: string) => {
 };
 
 const getAllSponsors = async (query: Record<string, any>, id: string) => {
-  // console.log('Fetching sponsors for user:', id);
-
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error('Invalid user ID');
   }
@@ -96,6 +89,7 @@ const getAllSponsors = async (query: Record<string, any>, id: string) => {
     Sponsor.find({
       userId: new mongoose.Types.ObjectId(id),
       isDeleted: false,
+      isPaid: true,
     })
       .populate('churchId')
       .populate('paymentId'),
@@ -136,7 +130,9 @@ const getAllSponsors = async (query: Record<string, any>, id: string) => {
 };
 
 const getSponsorById = async (id: string) => {
-  const sponsor = await Sponsor.findById(id).populate('tranId churchId userId');
+  const sponsor = await Sponsor.findById(id, { isPaid: true }).populate(
+    'tranId churchId userId',
+  );
   if (!sponsor || sponsor.isDeleted) {
     throw new AppError(httpStatus.NOT_FOUND, 'Sponsorship not found');
   }
@@ -185,7 +181,11 @@ const confirmPayment = async (paymentConfirmation: {
 
 const getTotalSpentByUser = async (userId: string) => {
   // Fetch all sponsorship records for the user where the sponsorship is not deleted
-  const sponsors = await Sponsor.find({ userId, isDeleted: false });
+  const sponsors = await Sponsor.find({
+    userId,
+    isDeleted: false,
+    isPaid: true,
+  });
 
   // Calculate the total amount spent by summing the `amount` fields
   const totalSpent = sponsors.reduce((acc, sponsor) => acc + sponsor.amount, 0);
@@ -198,6 +198,7 @@ const getSponsorsWithChurchId = async (query: Record<string, any>) => {
     Sponsor.find({
       churchId: { $exists: true, $ne: null }, // Checks if churchId exists and is not null
       isDeleted: false,
+      isPaid: true,
     })
       .populate('churchId')
       .populate('userId')
@@ -223,6 +224,7 @@ const getSponsorsWithNoChurch = async (query: Record<string, any>) => {
     Sponsor.find({
       churchId: { $exists: false }, // Filtering for sponsors with no churchId
       isDeleted: false,
+      isPaid: true,
     }).populate('userId'),
     query,
   )

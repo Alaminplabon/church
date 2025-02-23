@@ -37,9 +37,9 @@ const createBookEvent = async (payload: {
   // Send notification to the user
   await notificationServices.insertNotificationIntoDb({
     receiver: event.userId,
-    message: 'New Event Booking',
+    message: 'A Person Interest To Join Event',
     description: `A member has booked the event "${event.title}". You can review the details in the admin panel.`,
-    refference: result._id,
+    refference: payload.eventId,
     model_type: modeType.BookEvent,
   });
 
@@ -115,7 +115,6 @@ const deleteBookedEvent = async (id: string) => {
 };
 
 const getAllUserByEvents = async (query: Record<string, any>, id: any) => {
-  // console.log('test', id);
   const bookEventModel = new QueryBuilder(
     BookEvent.find({ eventId: id }).populate('userId'),
     query,

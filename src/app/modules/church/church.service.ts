@@ -59,27 +59,8 @@ const createChurch = async (payload: IChurch, files: any): Promise<IChurch> => {
   return result;
 };
 
-// const getAllChurch = async (query: Record<string, any>) => {
-//   const churchModel = new QueryBuilder(Church.find({ isDeleted: false }), query)
-//     .search(['churchName'])
-//     .filter()
-//     .paginate()
-//     .sort()
-//     .fields();
-
-//   const data = await churchModel.modelQuery;
-//   const meta = await churchModel.countTotal();
-
-//   return {
-//     data,
-//     meta,
-//   };
-// };
-
 const getAllChurch = async (query: Record<string, any>) => {
   const { lg, la, maxDistance = 10, ...restQuery } = query;
-  console.log('query', query);
-
   const churchModel = new QueryBuilder(
     Church.find({ isDeleted: false }),
     restQuery,
@@ -243,49 +224,6 @@ const getChurchById = async (id: string) => {
   return result;
 };
 
-// const getChurchSopnsor = async (id: string, query: Record<string, any>) => {
-//   // Extract the date from the query if provided
-//   const { date } = query;
-//   let dateFilter = {};
-
-//   // If date is provided, filter based on that date
-//   if (date) {
-//     const parsedDate = moment(date, 'DD/MM/YYYY').startOf('day'); // Ensure the date is parsed correctly
-//     dateFilter = {
-//       createdAt: {
-//         $gte: parsedDate.toDate(),
-//         $lt: parsedDate.endOf('day').toDate(),
-//       },
-//     };
-//   }
-
-//   const sponsorModel = new QueryBuilder(
-//     Sponsor.find({ churchId: id, ...dateFilter })
-//       .populate('userId')
-//       .populate('paymentId'),
-//     query,
-//   )
-//     .filter()
-//     .paginate()
-//     .sort()
-//     .fields();
-
-//   const data = await sponsorModel.modelQuery;
-//   const meta = await sponsorModel.countTotal();
-
-//   // Calculate the total amount for the day if a date filter is applied
-//   const totalAmount = data.reduce(
-//     (acc, sponsor) => acc + (sponsor.amount || 0),
-//     0,
-//   );
-
-//   return {
-//     data,
-//     meta,
-//     totalAmount, // Include the total amount in the response
-//   };
-// };
-
 const getChurchSopnsor = async (id: string, query: Record<string, any>) => {
   const { date } = query;
   let dateFilter = {};
@@ -338,26 +276,6 @@ const getChurchSopnsor = async (id: string, query: Record<string, any>) => {
     totalAmount,
   };
 };
-
-// const getChurchSopnsor = async (id: string, query: Record<string, any>) => {
-//   console.log('church', id);
-//   const sponsorModel = new QueryBuilder(
-//     Sponsor.find({ churchId: id }).populate('userId').populate('paymentId'),
-//     query,
-//   )
-//     .filter()
-//     .paginate()
-//     .sort()
-//     .fields();
-
-//   const data = await sponsorModel.modelQuery;
-//   const meta = await sponsorModel.countTotal();
-
-//   return {
-//     data,
-//     meta,
-//   };
-// };
 
 const getSingleById = async (id: any) => {
   const result = await Church.findById(id);

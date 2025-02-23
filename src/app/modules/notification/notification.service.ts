@@ -10,7 +10,6 @@ import moment from 'moment';
 // Insert notifications into the database
 const insertNotificationIntoDb = async (payload: any) => {
   const result = await Notification.insertMany(payload);
-  console.log('Insert notification--------==', payload);
   if (!result) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Notification created failed');
   }
@@ -43,6 +42,7 @@ const getAllNotifications = async (query: Record<string, any>) => {
 
 // Mark notifications as read
 const markAsDone = async (id: string) => {
+  // console.log('iiiiiiiiiiiii', id);
   const result = await Notification.updateMany(
     { receiver: id },
     {

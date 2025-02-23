@@ -97,8 +97,6 @@ const checkout = async (payload: IPayment) => {
 
     if (payload.sponsorId) {
       const sponsor = await Sponsor.findById(payload.sponsorId);
-
-      console.log('payload.sponsorId2222', sponsor);
       if (!sponsor) {
         throw new AppError(httpStatus.NOT_FOUND, 'Sponsor not found');
       }
@@ -150,6 +148,7 @@ const checkout = async (payload: IPayment) => {
 
 const confirmPayment = async (query: Record<string, any>) => {
   const { sessionId, paymentId } = query;
+  console.log('testtttttttt', query);
   const session = await startSession();
   const PaymentSession = await stripe.checkout.sessions.retrieve(sessionId);
   const paymentIntentId = PaymentSession.payment_intent as string;
@@ -250,16 +249,26 @@ const confirmPayment = async (query: Record<string, any>) => {
       { $inc: { popularity: 1 } },
       { upsert: false, new: true, session },
     );
+
     const admin = await User.findOne({ role: USER_ROLE.admin });
-
-    await notificationServices.insertNotificationIntoDb({
-      receiver: admin?._id,
-      message: 'A new subscription payment has been made.',
-      description: `User ${(payment.user as IUser)?.email} has successfully made a payment for their subscription. Payment ID: ${payment._id}.`,
-      refference: payment?._id,
-      model_type: modeType?.Payment,
-    });
-
+    const subs = await Payment.findOne(paymentId);
+    if (subs?.subscription) {
+      await notificationServices.insertNotificationIntoDb({
+        receiver: admin?._id,
+        message: 'A new subscription payment has been made.',
+        description: `User ${(payment.user as IUser)?.email} has successfully made a payment for their subscription. Payment ID: ${payment._id}.`,
+        refference: payment?._id,
+        model_type: modeType?.Payment,
+      });
+    } else {
+      await notificationServices.insertNotificationIntoDb({
+        receiver: admin?._id,
+        message: 'A new sponsor payment has been made.',
+        description: `User ${(payment.user as IUser)?.email} has successfully made a payment for their sponsor. Payment ID: ${payment._id}.`,
+        refference: payment?._id,
+        model_type: modeType?.Payment,
+      });
+    }
     await session.commitTransaction();
     return payment;
   } catch (error: any) {
@@ -560,16 +569,12 @@ const dashboardData = async (query: Record<string, any>) => {
       $sort: { '_id.month': 1 }, // Ensure sorting from Jan-Dec
     },
   ]);
-
-  // console.log('Raw Monthly Users Data:', monthlyUser);
   // return monthlyUser;
   // Format monthly income to have an entry for each month
   const formattedMonthlyUsers = Array.from({ length: 12 }, (_, index) => ({
     month: moment().month(index).format('MMM'),
     total: 0,
   }));
-
-  // console.log('Formatted Monthly Users Data:', formattedMonthlyUsers);
 
   monthlyUser.forEach(entry => {
     formattedMonthlyUsers[entry._id.month - 1].total = Math.round(entry.total);

@@ -27,7 +27,6 @@ const createEvent = catchAsync(async (req: Request, res: Response) => {
 
 const getAllChurchEvents = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
-  console.log(userId);
   const result = await eventService.getAllChurchEvents(userId, req.query);
   sendResponse(res, {
     statusCode: 200,

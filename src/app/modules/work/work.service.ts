@@ -21,8 +21,6 @@ const createWork = async (payload: IWork, files: any): Promise<IWork> => {
           path: `images/work/images/${Math.floor(100000 + Math.random() * 900000)}`,
         });
       });
-      console.log('imagearray', imgsArray);
-
       payload.images = await uploadManyToS3(imgsArray);
     } else {
       throw new AppError(httpStatus.BAD_REQUEST, 'Upload minimum 1 image');

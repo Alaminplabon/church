@@ -4,7 +4,6 @@ import { termsService } from './terms.service';
 
 // Create Terms
 const createterms = catchAsync(async (req: Request, res: Response) => {
-  // console.log('=======', req.body);
   const { description } = req.body;
   const newTerms = await termsService.createterms(description);
   res.status(201).json({

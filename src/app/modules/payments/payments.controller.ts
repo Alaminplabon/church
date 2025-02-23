@@ -19,8 +19,6 @@ const checkout = catchAsync(async (req: Request, res: Response) => {
 
 const confirmPayment = catchAsync(async (req: Request, res: Response) => {
   const result = await paymentsService.confirmPayment(req?.query);
-  console.log({ confirm: result });
-
   if (!result?.subscription && !result?.sponsorId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,

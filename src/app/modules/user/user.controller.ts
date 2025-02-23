@@ -93,8 +93,6 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
 const updateMyProfile = catchAsync(async (req: any, res: Response) => {
   const userId = req.user?.userId;
   // Ensure req.files is properly typed
-
-  // console.log('==========', req.files);
   const files = req.files as
     | { [fieldname: string]: Express.Multer.File[] }
     | undefined;
@@ -106,9 +104,6 @@ const updateMyProfile = catchAsync(async (req: any, res: Response) => {
       fileName: `images/user/profile/${Math.floor(100000 + Math.random() * 900000)}`,
     });
   }
-
-  console.log('text', files?.bannerImage?.[0]);
-
   // Upload banner image if provided
   if (files?.bannerImage?.[0]) {
     req.body.bannerimage = await uploadToS3({
