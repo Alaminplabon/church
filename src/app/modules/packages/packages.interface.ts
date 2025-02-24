@@ -2,6 +2,7 @@ import { Model } from 'mongoose';
 import { durationType } from './packages.constants';
 
 export interface IPackage {
+  _id: string;
   title: string;
   shortTitle: string;
   shortDescription: string;

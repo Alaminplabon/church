@@ -3,7 +3,7 @@ import { IUser } from '../user/user.interface';
 import { ISubscriptions } from '../subscription/subscription.interface';
 
 export interface IPayment {
-  _id?: ObjectId;
+  _id: ObjectId;
   user: ObjectId | IUser;
   subscription?: ObjectId | ISubscriptions;
   amount: number;

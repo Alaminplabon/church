@@ -140,6 +140,7 @@ const checkout = async (payload: IPayment) => {
       name: paymentData?.tranId,
       quantity: 1,
     },
+    //@ts-ignore
     paymentId: paymentData?._id,
   });
 
@@ -162,9 +163,10 @@ const confirmPayment = async (query: Record<string, any>) => {
 
   try {
     session.startTransaction();
+
     const payment = await Payment.findByIdAndUpdate(
       paymentId,
-      { isPaid: true, paymentIntentId },
+      { isPaid: true, paymentIntentId: paymentIntentId },
       { new: true, session },
     ).populate('user');
 
@@ -173,8 +175,14 @@ const confirmPayment = async (query: Record<string, any>) => {
     }
 
     const oldSubscription = await Subscription.findOneAndUpdate(
-      { user: payment?.user, isPaid: true, isExpired: false },
-      {},
+      {
+        user: payment?.user,
+        isPaid: true,
+        isExpired: false,
+      },
+      {
+        isExpired: true,
+      },
       { upsert: false, session },
     );
 
@@ -251,7 +259,7 @@ const confirmPayment = async (query: Record<string, any>) => {
     );
 
     const admin = await User.findOne({ role: USER_ROLE.admin });
-    const subs = await Payment.findOne(paymentId);
+    const subs = await Payment.findOne({ paymentId: payment._id });
     if (subs?.subscription) {
       await notificationServices.insertNotificationIntoDb({
         receiver: admin?._id,
