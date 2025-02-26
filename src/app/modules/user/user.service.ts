@@ -115,7 +115,7 @@ const createUser = async (payload: IUser) => {
 
 const getAllUser = async (query: Record<string, any>) => {
   const userModel = new QueryBuilder(User.find({ isDeleted: false }), query)
-    .search(['name', 'email', 'phoneNumber', 'status'])
+    .search(['servicesType', 'servicesTags', 'title', 'name'])
     .filter()
     .paginate()
     .sort();
